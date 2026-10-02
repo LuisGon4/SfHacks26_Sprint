@@ -6,12 +6,17 @@ import { SYSTEM_INSTRUCTION, USER_PROMPT } from "./prompt";
 
 const getModel = () => process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
 
+const BUSY_STATUSES = [500, 502, 503];
+// One retry after ~1 s, only for transient overload (UPSTREAM_BUSY). Not 429: retrying burns quota.
+// The SDK stops retrying once the caller's abort signal fires.
+const RETRY = { attempts: 2, initialDelay: 1, maxDelay: 2, httpStatusCodes: BUSY_STATUSES };
+
 let client: GoogleGenAI | undefined;
 
 function getClient(): GoogleGenAI {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new AppError("CONFIG_ERROR");
-  return (client ??= new GoogleGenAI({ apiKey }));
+  return (client ??= new GoogleGenAI({ apiKey, httpOptions: { retryOptions: RETRY } }));
 }
 
 // A client disconnect (req.signal) also maps to UPSTREAM_TIMEOUT; the response is simply unused.
@@ -26,7 +31,7 @@ export function toAppError(e: unknown, signal?: AbortSignal): AppError {
   // 404 means a bad model id.
   else if (status === 401 || status === 403 || status === 404 || (e instanceof ApiError && e.status === 400 && e.message.includes("API_KEY_INVALID"))) code = "CONFIG_ERROR";
   else if (status === 408 || status === 504) code = "UPSTREAM_TIMEOUT";
-  else if (status === 500 || status === 502 || status === 503) code = "UPSTREAM_BUSY";
+  else if (status !== undefined && BUSY_STATUSES.includes(status)) code = "UPSTREAM_BUSY";
   console.error("gemini", code, status);
   return new AppError(code);
 }
