@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import type { AnalyzeResult } from "@/lib/client/api";
 import { NOT_FOUND } from "@/lib/constants";
 import AskBox from "./AskBox";
+import CalendarCard from "./CalendarCard";
 import ReadAloudButton from "./ReadAloudButton";
 import { BTN_PRIMARY, CALLOUT, CARD } from "./ui";
 
@@ -66,6 +67,8 @@ export default function ResultView({ result: r, image, onReset }: Props) {
             ))}
           </dl>
         )}
+
+        {r.is_poster && <CalendarCard result={r} />}
 
         {found(r.visual_description) && (
           <details open={!r.is_poster} className={`${CARD} text-lg`}>

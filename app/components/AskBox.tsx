@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ask } from "@/lib/client/api";
 import { MAX_QUESTION_LEN } from "@/lib/constants";
-import { BTN_CHIP, BTN_PRIMARY, CALLOUT, CARD } from "./ui";
+import { BTN_CHIP, BTN_PRIMARY, CALLOUT, CARD, INPUT } from "./ui";
 
 const SUGGESTIONS = ["Is it free?", "Is there food?", "Do I need to register?"];
 
@@ -68,7 +68,7 @@ export default function AskBox({ image }: { image: string }) {
             onChange={(e) => setQuestion(e.target.value)}
             maxLength={MAX_QUESTION_LEN}
             aria-describedby="question-count"
-            className="min-h-12 flex-1 rounded-full border border-line bg-surface px-6 text-lg shadow-card"
+            className={`${INPUT} flex-1`}
           />
           <button
             type="submit"
