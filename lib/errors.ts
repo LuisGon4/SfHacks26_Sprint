@@ -1,6 +1,10 @@
-export type ErrorCode = "CONFIG_ERROR" | "RATE_LIMITED" | "UPSTREAM_TIMEOUT" | "UPSTREAM_BUSY" | "UPSTREAM_ERROR" | "INVALID_AI_RESPONSE";
+export type ErrorCode = "BAD_REQUEST" | "FORBIDDEN_ORIGIN" | "TOO_LARGE" | "UNSUPPORTED_TYPE" | "CONFIG_ERROR" | "RATE_LIMITED" | "UPSTREAM_TIMEOUT" | "UPSTREAM_BUSY" | "UPSTREAM_ERROR" | "INVALID_AI_RESPONSE";
 
 export const CODE_STATUS: Record<ErrorCode, number> = {
+  BAD_REQUEST: 400,
+  FORBIDDEN_ORIGIN: 403,
+  TOO_LARGE: 413,
+  UNSUPPORTED_TYPE: 415,
   CONFIG_ERROR: 500,
   RATE_LIMITED: 429,
   UPSTREAM_TIMEOUT: 504,
@@ -10,6 +14,10 @@ export const CODE_STATUS: Record<ErrorCode, number> = {
 };
 
 export const CODE_MESSAGE: Record<ErrorCode, string> = {
+  BAD_REQUEST: "We couldn't understand that request. Please choose an image and try again.",
+  FORBIDDEN_ORIGIN: "This request isn't allowed from here.",
+  TOO_LARGE: "That image is too large. Please choose a smaller one (under 3 MB).",
+  UNSUPPORTED_TYPE: "Please upload a JPEG, PNG, or WebP image.",
   CONFIG_ERROR: "The service is temporarily unavailable. Please try again later.",
   RATE_LIMITED: "Too many requests right now. Please wait a minute and try again, or view a sample result.",
   UPSTREAM_TIMEOUT: "Reading the poster took too long. Please try again.",

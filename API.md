@@ -87,10 +87,10 @@ Shape: `{ "error": { "code": "...", "message": "..." } }`
 
 | code | HTTP | when |
 |---|---|---|
-| BAD_REQUEST | 400 | Malformed JSON or missing image |
-| FORBIDDEN_ORIGIN | 403 | Cross-origin request |
-| TOO_LARGE | 413 | Image exceeds the size limit |
-| UNSUPPORTED_TYPE | 415 | Not jpeg/png/webp |
+| BAD_REQUEST | 400 | Malformed JSON, missing image, or content type is not `application/json` |
+| FORBIDDEN_ORIGIN | 403 | Cross-origin request, or missing `Origin` header |
+| TOO_LARGE | 413 | Image exceeds the size limit, or body exceeds ~4.5 MB |
+| UNSUPPORTED_TYPE | 415 | Not jpeg/png/webp, or file bytes do not match the declared type |
 | RATE_LIMITED | 429 | AI quota hit; offer demo mode |
 | CONFIG_ERROR | 500 | Server misconfigured |
 | UPSTREAM_ERROR | 502 | AI service failed |
@@ -104,7 +104,7 @@ Example (RATE_LIMITED):
 {
   "error": {
     "code": "RATE_LIMITED",
-    "message": "The reader is very busy right now. Please try again in a minute, or listen to a sample result instead."
+    "message": "Too many requests right now. Please wait a minute and try again, or view a sample result."
   }
 }
 ```
