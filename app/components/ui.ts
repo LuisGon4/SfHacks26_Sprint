@@ -7,6 +7,9 @@ export const BTN_GOLD = `${BASE} bg-gold px-8 py-3 text-xl text-purple-deep hove
 export const BTN_CHIP = `${BASE} bg-ground px-5 hover:bg-line`;
 export const BTN_LINK = "inline-flex min-h-12 items-center gap-2 text-lg font-bold hover:underline focus-visible:underline underline-offset-4 disabled:opacity-50";
 
+// Text, date, and time fields.
+export const INPUT = "min-h-12 rounded-full border border-line bg-surface px-6 text-lg shadow-card";
+
 // Page width wrapper; sections own it so bands can run edge to edge.
 export const CONTAINER = "mx-auto w-full max-w-6xl px-4 sm:px-6";
 // Dark centered hero band; cards placed after it use OVERLAP to ride up over its bottom edge.
