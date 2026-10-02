@@ -43,14 +43,14 @@ export const posterResponseSchema: Schema = {
 };
 
 // Strip invisible/control chars (keeping ZWJ), collapse whitespace, cap length by code points.
-function clean(v: string, max: number): string {
+export function cleanText(v: string, max: number): string {
   const s = v
     .replace(/[\u00AD\u200B\u200C\u200E\u200F\u202A-\u202E\u2060-\u2064\u2066-\u2069]/g, "")
     .replace(/[\u0000-\u001F\u007F-\u009F]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
   const t = Array.from(s).slice(0, max).join("").toWellFormed().replace(/\u200D+$/, "").trim();
-  return t || NOT_FOUND;
+  return t;
 }
 
 export function validatePosterResult(raw: unknown): PosterResult | null {
@@ -63,7 +63,7 @@ export function validatePosterResult(raw: unknown): PosterResult | null {
     const v = r[k];
     if (v == null) out[k] = NOT_FOUND;
     else if (typeof v !== "string") return null;
-    else out[k] = clean(v, MAX_LEN[k]);
+    else out[k] = cleanText(v, MAX_LEN[k]) || NOT_FOUND;
   }
   // Non-posters keep only visual_description; everything else is blanked.
   if (!out.is_poster) {

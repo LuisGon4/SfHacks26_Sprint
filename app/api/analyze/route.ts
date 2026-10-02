@@ -1,13 +1,11 @@
 import { analyzePoster } from "@/lib/gemini";
-import { checkOrigin, errorResponse, json, readJson } from "@/lib/http";
+import { MAX_BODY_BYTES, TIMEOUT_MS, checkOrigin, errorResponse, json, readJson } from "@/lib/http";
 import { parseImageDataUrl } from "@/lib/image";
 import type { PosterResult } from "@/lib/posterSchema";
 import demoFixture from "@/lib/demoFixture.json";
 
 export const maxDuration = 30;
 
-const TIMEOUT_MS = 25_000;
-const MAX_BODY_BYTES = 4.5 * 1024 * 1024;
 // A real, verified run on the sample flyer, served only on ?demo=1.
 const DEMO_RESULT: PosterResult = demoFixture;
 

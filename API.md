@@ -109,6 +109,19 @@ Example (RATE_LIMITED):
 }
 ```
 
+## POST /api/ask
+
+Answers one follow-up question about a poster image. Stateless: re-send the image with every call.
+
+- Body: `{ "image": "data:image/jpeg;base64,...", "question": "Is there free food?" }`
+- `image`: same data URL rules as analyze. `question`: 1-300 characters (over 300 is rejected, never truncated).
+- Success (200): `{ "answer": "..." }`. Plain text, at most 500 characters, 1-3 short sentences. Returns `"The poster doesn't say."` when the poster doesn't state it.
+- Errors: same shape and table as above. `BAD_REQUEST` also covers a missing, empty, non-string, or over-300-character question.
+- Same-origin only. Responses send `Cache-Control: no-store`.
+- No `?demo`: hide the question box on demo results.
+- The question is sent to Google AI along with the image.
+- Frontend: render the answer as plain text in an `aria-live` region. Show the `RATE_LIMITED` message normally.
+
 ## Demo mode
 
 `POST /api/analyze?demo=1` returns a pre-verified sample with `demo: true` and makes no AI call. No request body is required. The same-origin check still applies (can return `FORBIDDEN_ORIGIN`); otherwise it always returns 200. The UI must visibly label it "Sample result". Offer it after `RATE_LIMITED`.

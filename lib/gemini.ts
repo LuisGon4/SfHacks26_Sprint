@@ -1,8 +1,9 @@
 import "server-only";
 import { ApiError, GoogleGenAI, type GenerateContentConfig, type Part } from "@google/genai";
 import { AppError, type ErrorCode } from "./errors";
+import { askResponseSchema, validateAnswer } from "./askSchema";
 import { posterResponseSchema, validatePosterResult, type PosterResult } from "./posterSchema";
-import { SYSTEM_INSTRUCTION, USER_PROMPT } from "./prompt";
+import { ASK_INSTRUCTION, QUESTION_LABEL, SYSTEM_INSTRUCTION, USER_PROMPT } from "./prompt";
 
 const getModel = () => process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
 
@@ -66,4 +67,15 @@ export async function analyzePoster(base64: string, mimeType: string, signal?: A
   const result = validatePosterResult(raw);
   if (!result) throw new AppError("INVALID_AI_RESPONSE");
   return result;
+}
+
+export async function askPoster(base64: string, mimeType: string, question: string, signal?: AbortSignal): Promise<string> {
+  const raw = await generateJson(
+    [{ inlineData: { mimeType, data: base64 } }, { text: QUESTION_LABEL + JSON.stringify(question) }],
+    { systemInstruction: ASK_INSTRUCTION, responseSchema: askResponseSchema },
+    signal,
+  );
+  const answer = validateAnswer(raw);
+  if (!answer) throw new AppError("INVALID_AI_RESPONSE");
+  return answer;
 }

@@ -14,7 +14,7 @@ export const CODE_STATUS: Record<ErrorCode, number> = {
 };
 
 export const CODE_MESSAGE: Record<ErrorCode, string> = {
-  BAD_REQUEST: "We couldn't understand that request. Please choose an image and try again.",
+  BAD_REQUEST: "We couldn't understand that request. Please check your image and question and try again.",
   FORBIDDEN_ORIGIN: "This request isn't allowed from here.",
   TOO_LARGE: "That image is too large. Please choose a smaller one (under 3 MB).",
   UNSUPPORTED_TYPE: "Please upload a JPEG, PNG, or WebP image.",

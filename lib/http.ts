@@ -1,5 +1,7 @@
 import { AppError, CODE_MESSAGE, CODE_STATUS } from "./errors";
 
+export const TIMEOUT_MS = 25_000;
+export const MAX_BODY_BYTES = 4.5 * 1024 * 1024;
 export const NO_STORE = { "Cache-Control": "no-store" };
 
 export function json(body: unknown, status = 200): Response {
