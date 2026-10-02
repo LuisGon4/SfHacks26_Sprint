@@ -96,6 +96,7 @@ Shape: `{ "error": { "code": "...", "message": "..." } }`
 | UPSTREAM_ERROR | 502 | AI service failed |
 | INVALID_AI_RESPONSE | 502 | AI returned an unusable response |
 | UPSTREAM_TIMEOUT | 504 | AI service timed out |
+| UPSTREAM_BUSY | 503 | Google AI overloaded (transient) |
 
 Example (RATE_LIMITED):
 
@@ -124,7 +125,7 @@ Example (RATE_LIMITED):
 - Render all fields as plain text: no `dangerouslySetInnerHTML`, no auto-linking.
 - Put `error.message` into an `aria-live` region (messages are written to be screen-reader-friendly).
 - Branch on `error.code`, never on message text.
-- Retry at most once on UPSTREAM_ERROR / UPSTREAM_TIMEOUT / INVALID_AI_RESPONSE.
+- Retry at most once on UPSTREAM_ERROR / UPSTREAM_TIMEOUT / UPSTREAM_BUSY / INVALID_AI_RESPONSE.
 - Set a client-side timeout of ~35s.
 - For CONFIG_ERROR show a generic "Service is temporarily unavailable".
 - Handle image decode failures (e.g. HEIC) before upload with a clear message asking for JPEG/PNG.
