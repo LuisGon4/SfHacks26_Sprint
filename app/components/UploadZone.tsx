@@ -5,6 +5,9 @@ import { BTN_LINK, BTN_OUTLINE, BTN_PRIMARY, CARD } from "./ui";
 
 type Props = { disabled: boolean; onFile: (file: File) => void; onDemo: () => void };
 
+// Some pickers grey out HEIC under image/* alone.
+const ACCEPT = "image/*,.heic,.heif";
+
 // Outlined on touch devices, where "Take a photo" leads; filled on desktop, where it is the only action.
 const PICK = `${BTN_OUTLINE} pointer-fine:border-transparent pointer-fine:bg-purple pointer-fine:text-white pointer-fine:hover:bg-purple-deep dark:pointer-fine:bg-gold dark:pointer-fine:text-purple-deep dark:pointer-fine:hover:bg-gold/90`;
 
@@ -57,8 +60,8 @@ export default function UploadZone({ disabled, onFile, onDemo }: Props) {
           </button>
         </div>
         <p className="hidden text-muted pointer-fine:block">Or drop an image anywhere in this box.</p>
-        <input ref={cameraRef} type="file" accept="image/*" capture="environment" hidden onChange={pick} />
-        <input ref={pickerRef} type="file" accept="image/*" hidden onChange={pick} />
+        <input ref={cameraRef} type="file" accept={ACCEPT} capture="environment" hidden onChange={pick} />
+        <input ref={pickerRef} type="file" accept={ACCEPT} hidden onChange={pick} />
       </div>
 
       <p id="privacy-note" className="max-w-prose text-muted">

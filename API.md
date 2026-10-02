@@ -16,7 +16,7 @@
 - Allowed types: jpeg, png, webp only. Decoded image size must be 3 MB or less (base64 inflates ~33%, and Vercel caps request bodies at ~4.5 MB).
 - Target 1.5 MB or less after resize/re-encode: resize to about 1600px on the longest side and re-encode to JPEG (quality ~0.85) via canvas. This also strips EXIF/GPS metadata.
 - A body over the platform limit may be rejected before our code runs, with a non-JSON 413. Clients must handle non-JSON responses and network failures with a generic friendly message.
-- HEIC may fail to decode in desktop Chrome.
+- HEIC is decoded in the browser (natively in Safari, via `heic-to` elsewhere) and re-encoded to JPEG, so the server never receives HEIC.
 - Same-origin requests only.
 
 ## Success (200)
@@ -152,6 +152,6 @@ Turns text into natural speech (Gemini TTS, voice "Charon") for Read Aloud. Stat
 - Retry at most once on UPSTREAM_ERROR / UPSTREAM_TIMEOUT / UPSTREAM_BUSY / INVALID_AI_RESPONSE.
 - Set a client-side timeout of ~35s.
 - For CONFIG_ERROR show a generic "Service is temporarily unavailable".
-- Handle image decode failures (e.g. HEIC) before upload with a clear message asking for JPEG/PNG.
+- Handle image decode failures before upload with a clear message asking for a JPEG, PNG, or HEIC photo.
 - Show: "AI can make mistakes. Verify the date, time, and location with the event organizer."
 - Never import anything from `lib/gemini.ts` in client components (`server-only` will fail the build).

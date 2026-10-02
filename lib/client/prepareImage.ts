@@ -1,9 +1,11 @@
 const MAX_SIDE = 1600;
 const QUALITY = 0.85;
 
-export const DECODE_ERROR = "Couldn't open that image. Please use a JPEG or PNG photo.";
+export const DECODE_ERROR = "Couldn't open that image. Please use a JPEG, PNG, or HEIC photo.";
 
-async function decode(file: File): Promise<CanvasImageSource & { width: number; height: number }> {
+type Decoded = CanvasImageSource & { width: number; height: number };
+
+async function decodeNative(file: File): Promise<Decoded> {
   try {
     return await createImageBitmap(file, { imageOrientation: "from-image" });
   } catch {
@@ -17,6 +19,17 @@ async function decode(file: File): Promise<CanvasImageSource & { width: number; 
     } finally {
       URL.revokeObjectURL(url);
     }
+  }
+}
+
+// Safari opens HEIC natively; elsewhere load the (large) decoder only when a HEIC file shows up.
+async function decode(file: File): Promise<Decoded> {
+  try {
+    return await decodeNative(file);
+  } catch (err) {
+    const { heicTo, isHeic } = await import("heic-to/next");
+    if (!(await isHeic(file))) throw err;
+    return heicTo({ blob: file, type: "bitmap", options: { imageOrientation: "from-image" } });
   }
 }
 
