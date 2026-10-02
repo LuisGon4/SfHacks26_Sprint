@@ -19,8 +19,8 @@ export default function SiteHeader({ onHome }: { onHome?: (focusId: string) => v
 
   return (
     <header className="bg-ground">
-      <div className={`${CONTAINER} flex flex-wrap items-center justify-between gap-x-6 gap-y-2 py-4`}>
-        <h1 className="text-2xl font-extrabold whitespace-nowrap">
+      <div className={`${CONTAINER} flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-4 sm:gap-x-6`}>
+        <h1 className="text-xl font-extrabold whitespace-nowrap sm:text-2xl">
           <Link href="/" onNavigate={toHome("hero-heading")} className="inline-flex min-h-12 items-center">
             {/* Spelled out so screen readers say "summar eyes" instead of guessing. */}
             <span aria-hidden="true">Summareyes</span>
@@ -28,7 +28,7 @@ export default function SiteHeader({ onHome }: { onHome?: (focusId: string) => v
           </Link>
         </h1>
         <nav aria-label="Main">
-          <ul className="flex flex-wrap items-center gap-x-6 gap-y-2">
+          <ul className="flex flex-wrap items-center gap-x-5 gap-y-2 sm:gap-x-6">
             <li>
               <Link href="/" onNavigate={toHome("hero-heading")} aria-current={pathname === "/" ? "page" : undefined} className={NAV}>
                 Home
@@ -39,7 +39,8 @@ export default function SiteHeader({ onHome }: { onHome?: (focusId: string) => v
                 About
               </Link>
             </li>
-            <li>
+            {/* Hidden on phones to keep the header on one row; Home leads to the upload area. */}
+            <li className="hidden sm:block">
               <Link href="/#upload" onNavigate={toHome("upload-heading")} className={`${BTN_OUTLINE} px-6`}>
                 Read a poster
               </Link>
