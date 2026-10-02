@@ -1,9 +1,9 @@
 import { Type, type Schema } from "@google/genai";
 import { AppError } from "./errors";
+import { MAX_QUESTION_LEN } from "./constants";
 import { cleanText } from "./posterSchema";
 
 export const NOT_STATED = "The poster doesn't say.";
-export const MAX_QUESTION_LEN = 300;
 export const MAX_ANSWER_LEN = 500;
 
 export const askResponseSchema: Schema = {

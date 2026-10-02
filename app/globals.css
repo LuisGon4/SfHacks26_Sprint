@@ -1,26 +1,85 @@
 @import "tailwindcss";
 
+/* SFSU brand: purple #463077, gold #C99700.
+   Gold is ~2.7:1 on light grounds: use it only as a fill under dark text or on dark grounds. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  color-scheme: light dark;
+  --ground: #f7f5fb;
+  --surface: #ffffff;
+  --fg: #1c1430;
+  --muted: #5b5070;
+  --line: #dcd5ea;
+  --callout: #fff4cc;
+  --callout-fg: #3d2f00;
+  --focus: #463077;
+  --accent-line: #463077; /* outlines on the ground: purple in light, gold in dark */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --ground: #24173f;
+    --surface: #2e2050;
+    --fg: #f7f5fb;
+    --muted: #c3b9d9;
+    --line: #45356b;
+    --callout: #3a2e0c;
+    --callout-fg: #ffe38a;
+    --focus: #c99700;
+    --accent-line: #c99700;
   }
 }
 
+@theme inline {
+  --color-purple: #463077;
+  --color-purple-deep: #24173f;
+  --color-gold: #c99700;
+  --color-ground: var(--ground);
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-callout: var(--callout);
+  --color-callout-fg: var(--callout-fg);
+  --color-accent-line: var(--accent-line);
+  --font-sans: var(--font-atkinson), system-ui, sans-serif;
+}
+
+html {
+  font-size: 112.5%; /* 18px base for low-vision readers */
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--ground);
+  color: var(--fg);
+  line-height: 1.6;
+}
+
+/* Dark surfaces (the purple slab) switch the ring to gold. */
+.on-dark {
+  --focus: #c99700;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.reveal {
+  animation: reveal 400ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }

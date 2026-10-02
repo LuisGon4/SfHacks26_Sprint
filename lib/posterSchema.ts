@@ -1,6 +1,6 @@
 import { Type, type Schema } from "@google/genai";
+import { NOT_FOUND } from "./constants";
 
-export const NOT_FOUND = "Not found";
 export const NON_POSTER_SUMMARY = "This image doesn't appear to be an event poster.";
 
 export const STRING_FIELDS = ["event_name", "date", "time", "location", "registration", "description", "host_organization", "contact_or_link", "visual_description", "confidence_notes", "summary"] as const;

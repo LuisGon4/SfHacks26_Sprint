@@ -2,7 +2,7 @@
 
 **Accessible event posters for blind and low-vision SFSU students.**
 
-Campus events are mostly advertised on printed flyers and image-only social posts. Screen readers can't read those. Poster Reader lets a student take a photo of a poster and get back the event details as clean, structured text. They also get a short spoken summary and can ask follow-up questions like *"Is there free food?"*
+Campus events are mostly advertised on printed flyers and image-only social posts. Screen readers can't read those. Summareyes lets a student take a photo of a poster and get back the event details as clean, structured text. They also get a short spoken summary and can ask follow-up questions like *"Is there free food?"*
 
 ## How it works
 
