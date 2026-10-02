@@ -1,4 +1,4 @@
-# Poster Reader
+# Summareyes
 
 **Accessible event posters for blind and low-vision SFSU students.**
 
