@@ -14,11 +14,14 @@ export const askResponseSchema: Schema = {
   required: ["answer"],
 };
 
-export function parseQuestion(v: unknown): string {
-  const q = typeof v === "string" ? cleanText(v, Infinity) : "";
-  if (!q || Array.from(q).length > MAX_QUESTION_LEN) throw new AppError("BAD_REQUEST");
-  return q;
+// Cleans user-supplied text; empty or over-long input is rejected, never truncated.
+export function parseText(v: unknown, max: number): string {
+  const t = typeof v === "string" ? cleanText(v, Infinity) : "";
+  if (!t || Array.from(t).length > max) throw new AppError("BAD_REQUEST");
+  return t;
 }
+
+export const parseQuestion = (v: unknown) => parseText(v, MAX_QUESTION_LEN);
 
 export function validateAnswer(raw: unknown): string | null {
   if (typeof raw !== "object" || raw === null || Array.isArray(raw)) return null;

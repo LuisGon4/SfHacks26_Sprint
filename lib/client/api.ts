@@ -17,9 +17,11 @@ const fail = (code: ClientErrorCode): ApiResult<never> => ({
 });
 
 type Attempt<T> = ApiResult<T> & { clientTimeout?: boolean };
+type Reader<T> = (res: Response) => Promise<T>;
+const readJsonBody = (res: Response) => res.json();
 
 // Throws AbortError if the caller's signal aborts, so callers can ignore stale requests.
-async function postOnce<T>(url: string, body: unknown, signal?: AbortSignal): Promise<Attempt<T>> {
+async function postOnce<T>(url: string, body: unknown, signal: AbortSignal | undefined, read: Reader<T>): Promise<Attempt<T>> {
   let res: Response;
   try {
     const timeout = AbortSignal.timeout(CLIENT_TIMEOUT_MS);
@@ -33,8 +35,11 @@ async function postOnce<T>(url: string, body: unknown, signal?: AbortSignal): Pr
     if (signal?.aborted) throw e;
     return e instanceof DOMException && e.name === "TimeoutError" ? { ...fail("UPSTREAM_TIMEOUT"), clientTimeout: true } : fail("NETWORK");
   }
+  if (res.ok) {
+    const data = await read(res).catch(() => null);
+    return data ? { ok: true, data } : fail("NETWORK");
+  }
   const json = await res.json().catch(() => null);
-  if (res.ok && json) return { ok: true, data: json as T };
   const code = json?.error?.code;
   // Branch on code only; messages always come from our own table.
   if (typeof code === "string" && Object.hasOwn(CODE_MESSAGE, code)) return fail(code as ErrorCode);
@@ -43,15 +48,19 @@ async function postOnce<T>(url: string, body: unknown, signal?: AbortSignal): Pr
 }
 
 // Retries once on transient upstream failures (not after our own 35s timeout), per API.md.
-async function postJson<T>(url: string, body?: unknown, signal?: AbortSignal): Promise<ApiResult<T>> {
-  const first = await postOnce<T>(url, body, signal);
-  if (first.ok || first.clientTimeout || !RETRYABLE.has(first.code)) return first;
+type Options<T> = { read?: Reader<T>; retry?: boolean };
+
+async function post<T>(url: string, body: unknown, signal?: AbortSignal, { read = readJsonBody, retry = true }: Options<T> = {}): Promise<ApiResult<T>> {
+  const first = await postOnce(url, body, signal, read);
+  if (!retry || first.ok || first.clientTimeout || !RETRYABLE.has(first.code)) return first;
   await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
   signal?.throwIfAborted();
-  return postOnce<T>(url, body, signal);
+  return postOnce(url, body, signal, read);
 }
 
-export const analyze = (image: string, signal?: AbortSignal) => postJson<AnalyzeResult>("/api/analyze", { image }, signal);
-export const analyzeDemo = (signal?: AbortSignal) => postJson<AnalyzeResult>("/api/analyze?demo=1", undefined, signal);
+export const analyze = (image: string, signal?: AbortSignal) => post<AnalyzeResult>("/api/analyze", { image }, signal);
+export const analyzeDemo = (signal?: AbortSignal) => post<AnalyzeResult>("/api/analyze?demo=1", undefined, signal);
 export const ask = (image: string, question: string, signal?: AbortSignal) =>
-  postJson<{ answer: string }>("/api/ask", { image, question }, signal);
+  post<{ answer: string }>("/api/ask", { image, question }, signal);
+// No retry: the button falls back to the device voice instead of making the user wait.
+export const speak = (text: string, signal?: AbortSignal) => post("/api/speak", { text }, signal, { read: (res) => res.blob(), retry: false });

@@ -122,6 +122,17 @@ Answers one follow-up question about a poster image. Stateless: re-send the imag
 - The question is sent to Google AI along with the image.
 - Frontend: render the answer as plain text in an `aria-live` region. Show the `RATE_LIMITED` message normally.
 
+## POST /api/speak
+
+Turns text into natural speech (Gemini TTS, voice "Charon") for Read Aloud. Stateless.
+
+- Body: `{ "text": "..." }`. 1-400 characters after cleanup (over 400 is rejected, never truncated). Longer text (e.g. `summary` + `confidence_notes`) must be split into sentence chunks, one request each; play the first while fetching the next.
+- Success (200): `Content-Type: audio/wav` binary (24 kHz mono 16-bit PCM, about 48 KB per second of speech). Not JSON.
+- Errors: same JSON shape and table as above. `BAD_REQUEST` covers a missing, empty, non-string, or over-400-character text.
+- Same-origin only. Responses send `Cache-Control: no-store`.
+- Takes about 4-7 s per chunk and uses Gemini quota (one request per chunk): cache the audio per result instead of re-requesting on replay. Do not retry; fall back instead.
+- Frontend: if it fails (e.g. `RATE_LIMITED`), fall back to the browser's `speechSynthesis` and say so in an `aria-live` region.
+
 ## Demo mode
 
 `POST /api/analyze?demo=1` returns a pre-verified sample with `demo: true` and makes no AI call. No request body is required. The same-origin check still applies (can return `FORBIDDEN_ORIGIN`); otherwise it always returns 200. The UI must visibly label it "Sample result". Offer it after `RATE_LIMITED`.

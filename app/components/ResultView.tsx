@@ -46,7 +46,7 @@ export default function ResultView({ result: r, image, onReset }: Props) {
             {heading}
           </h2>
           {r.is_poster && <p className="max-w-prose text-xl">{r.summary}</p>}
-          <ReadAloudButton text={speech} />
+          <ReadAloudButton key={speech} text={speech} />
         </section>
 
         {r.is_poster && found(r.confidence_notes) && (
