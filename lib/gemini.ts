@@ -1,11 +1,13 @@
 import "server-only";
-import { ApiError, GoogleGenAI, type GenerateContentConfig, type Part } from "@google/genai";
+import { ApiError, GoogleGenAI, Modality, type GenerateContentConfig, type Part } from "@google/genai";
 import { AppError, type ErrorCode } from "./errors";
 import { askResponseSchema, validateAnswer } from "./askSchema";
 import { posterResponseSchema, validatePosterResult, type PosterResult } from "./posterSchema";
 import { ASK_INSTRUCTION, QUESTION_LABEL, SYSTEM_INSTRUCTION, USER_PROMPT } from "./prompt";
 
 const getModel = () => process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
+const getTtsModel = () => process.env.GEMINI_TTS_MODEL || "gemini-3.8-flash-lite-tts";
+const TTS_VOICE = "Charon";
 
 const BUSY_STATUSES = [500, 502, 503];
 // One retry after ~1 s, only for transient overload (UPSTREAM_BUSY). Not 429: retrying burns quota.
@@ -78,4 +80,28 @@ export async function askPoster(base64: string, mimeType: string, question: stri
   const answer = validateAnswer(raw);
   if (!answer) throw new AppError("INVALID_AI_RESPONSE");
   return answer;
+}
+
+// Returns a 24 kHz mono WAV; unary TTS responses already carry the RIFF header.
+export async function synthesizeSpeech(text: string, signal?: AbortSignal): Promise<Buffer> {
+  let audio: { mimeType?: string; data?: string } | undefined;
+  try {
+    const res = await getClient().models.generateContent({
+      model: getTtsModel(),
+      contents: [{ role: "user", parts: [{ text }] }],
+      config: {
+        responseModalities: [Modality.AUDIO],
+        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: TTS_VOICE } } },
+        abortSignal: signal,
+      },
+    });
+    audio = res.candidates?.[0]?.content?.parts?.find((p) => p.inlineData)?.inlineData;
+  } catch (e) {
+    throw toAppError(e, signal);
+  }
+  if (!audio?.data || !audio.mimeType?.startsWith("audio/wav")) {
+    console.error("gemini", "INVALID_AI_RESPONSE", "tts", audio?.mimeType);
+    throw new AppError("INVALID_AI_RESPONSE");
+  }
+  return Buffer.from(audio.data, "base64");
 }

@@ -1,5 +1,6 @@
 import { NOT_STATED } from "./askSchema";
-import { NOT_FOUND, NON_POSTER_SUMMARY } from "./posterSchema";
+import { NOT_FOUND } from "./constants";
+import { NON_POSTER_SUMMARY } from "./posterSchema";
 
 const FACE_RULE = "Never identify anyone from their face or appearance, and never guess age, race, gender, or disability.";
 const QR_RULE = "For a QR code, say only that one is present; never guess its destination.";
