@@ -1,0 +1,14 @@
+{
+  "is_poster": true,
+  "event_name": "Intro to Web Exploitation",
+  "date": "Sep 31",
+  "time": "4pm - 6pm",
+  "location": "CS Lab SCI 213",
+  "registration": "RSVP via QR code",
+  "description": "Learn about common web dev mistakes during the creation of websites. Exploit websites in a hands-on, game-like workshop. Learn about SQL injection, template injection, SSRF, etc. Beginner friendly - bring a laptop!",
+  "host_organization": "SFSU Cybersecurity Club",
+  "contact_or_link": "Not found",
+  "visual_description": "A dark themed poster with glitch style text, pixel art computers, and an icon of a person in a hooded sweatshirt using a laptop. A QR code is in the center with a mouse cursor pointing at it.",
+  "confidence_notes": "Sep 31 is printed on the poster, which is an impossible date and may be a typo.",
+  "summary": "Intro to Web Exploitation is hosted by SFSU Cybersecurity Club on Sep 31 from 4pm to 6pm at CS Lab SCI 213. Learn about common web dev mistakes and exploit websites in a hands-on, game-like workshop."
+}
