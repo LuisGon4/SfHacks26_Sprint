@@ -5,7 +5,7 @@ import type { AnalyzeResult } from "@/lib/client/api";
 import { NOT_FOUND } from "@/lib/constants";
 import AskBox from "./AskBox";
 import ReadAloudButton from "./ReadAloudButton";
-import { BTN_PRIMARY, CALLOUT } from "./ui";
+import { BTN_PRIMARY, CALLOUT, CARD } from "./ui";
 
 type Props = { result: AnalyzeResult; image: string | null; onReset: () => void };
 type Key = keyof AnalyzeResult;
@@ -36,11 +36,11 @@ export default function ResultView({ result: r, image, onReset }: Props) {
     <div className={image ? "grid gap-8 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] lg:gap-12" : "max-w-3xl"}>
       {image && (
         // eslint-disable-next-line @next/next/no-img-element -- local data URL, nothing to optimize
-        <img src={image} alt="Your poster photo" className="max-h-80 w-auto self-start rounded-2xl border-2 border-line object-contain lg:sticky lg:top-6 lg:max-h-[80vh]" />
+        <img src={image} alt="Your poster photo" className="max-h-80 w-auto self-start rounded-3xl object-contain shadow-card lg:sticky lg:top-6 lg:max-h-[80vh]" />
       )}
 
       <div className="flex min-w-0 flex-col gap-8">
-        <section className="on-dark reveal flex flex-col gap-5 rounded-3xl bg-purple p-6 text-white sm:p-8">
+        <section className="on-dark reveal flex flex-col gap-5 rounded-3xl bg-band p-6 text-white shadow-card sm:p-10">
           {r.demo && <p className="self-start rounded-full bg-gold px-4 py-1 font-bold text-purple-deep">Sample result</p>}
           <h2 ref={headingRef} tabIndex={-1} className="text-4xl leading-[1.05] font-extrabold text-balance break-words lg:text-5xl">
             {heading}
@@ -57,7 +57,7 @@ export default function ResultView({ result: r, image, onReset }: Props) {
         )}
 
         {r.is_poster && (
-          <dl className="divide-y-2 divide-line border-y-2 border-line">
+          <dl className={`${CARD} divide-y divide-line py-2 sm:py-2`}>
             {ROWS.filter(([, k, always]) => always || found(r[k])).map(([label, k]) => (
               <div key={k} className="grid gap-1 py-4 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-6">
                 <dt className="font-bold text-muted">{label}</dt>
@@ -68,9 +68,9 @@ export default function ResultView({ result: r, image, onReset }: Props) {
         )}
 
         {found(r.visual_description) && (
-          <details open={!r.is_poster} className="text-lg">
-            <summary className="min-h-12 cursor-pointer py-2 font-bold">What the image looks like</summary>
-            <p className="max-w-prose">{r.visual_description}</p>
+          <details open={!r.is_poster} className={`${CARD} text-lg`}>
+            <summary className="min-h-12 cursor-pointer content-center font-bold">What the image looks like</summary>
+            <p className="mt-2 max-w-prose">{r.visual_description}</p>
           </details>
         )}
 

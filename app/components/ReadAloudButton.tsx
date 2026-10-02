@@ -141,7 +141,7 @@ export default function ReadAloudButton({ text }: { text: string }) {
 
   return (
     <div className="flex flex-col">
-      <button type="button" onClick={play} className={BTN_GOLD}>
+      <button type="button" onClick={play} className={`${BTN_GOLD} w-full`}>
         <svg aria-hidden="true" viewBox="0 0 24 24" className={`size-6 fill-current ${status === "loading" ? "animate-pulse" : ""}`}>
           {status === "idle" ? (
             <path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z" />

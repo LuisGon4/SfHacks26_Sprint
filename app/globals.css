@@ -13,6 +13,8 @@
   --callout-fg: #3d2f00;
   --focus: #463077;
   --accent-line: #463077; /* outlines on the ground: purple in light, gold in dark */
+  --band: #24173f; /* dark hero band */
+  --shadow: 0 10px 30px rgb(36 23 63 / 0.08), 0 1px 3px rgb(36 23 63 / 0.06);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -26,6 +28,8 @@
     --callout-fg: #ffe38a;
     --focus: #c99700;
     --accent-line: #c99700;
+    --band: #150c28;
+    --shadow: 0 10px 30px rgb(0 0 0 / 0.35), 0 1px 3px rgb(0 0 0 / 0.3);
   }
 }
 
@@ -42,6 +46,8 @@
   --color-callout-fg: var(--callout-fg);
   --color-accent-line: var(--accent-line);
   --font-sans: var(--font-atkinson), system-ui, sans-serif;
+  --color-band: var(--band);
+  --shadow-card: var(--shadow);
 }
 
 html {

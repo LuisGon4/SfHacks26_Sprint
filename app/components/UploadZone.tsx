@@ -1,9 +1,12 @@
 "use client";
 
 import { useRef, useState, type ChangeEvent } from "react";
-import { BTN_LINK, BTN_OUTLINE, BTN_PRIMARY } from "./ui";
+import { BTN_LINK, BTN_OUTLINE, BTN_PRIMARY, CARD } from "./ui";
 
 type Props = { disabled: boolean; onFile: (file: File) => void; onDemo: () => void };
+
+// Outlined on touch devices, where "Take a photo" leads; filled on desktop, where it is the only action.
+const PICK = `${BTN_OUTLINE} pointer-fine:border-transparent pointer-fine:bg-purple pointer-fine:text-white pointer-fine:hover:bg-purple-deep dark:pointer-fine:bg-gold dark:pointer-fine:text-purple-deep dark:pointer-fine:hover:bg-gold/90`;
 
 export default function UploadZone({ disabled, onFile, onDemo }: Props) {
   const cameraRef = useRef<HTMLInputElement>(null);
@@ -19,7 +22,7 @@ export default function UploadZone({ disabled, onFile, onDemo }: Props) {
   };
 
   return (
-    <section aria-labelledby="upload-heading" className="flex max-w-2xl flex-col gap-5">
+    <section id="upload" aria-labelledby="upload-heading" className="flex scroll-mt-8 flex-col items-center gap-5 text-center">
       <div
         onDragOver={(e) => {
           if (disabled) return;
@@ -34,22 +37,22 @@ export default function UploadZone({ disabled, onFile, onDemo }: Props) {
           setDragging(false);
           take(e.dataTransfer.files[0]);
         }}
-        className={`flex flex-col gap-6 rounded-3xl border-3 border-dashed border-accent-line p-6 sm:p-10 ${dragging ? "bg-surface" : ""}`}
+        className={`${CARD} flex w-full flex-col items-center gap-6 sm:p-12 ${dragging ? "ring-4 ring-accent-line" : ""}`}
       >
         <div>
           <h2 id="upload-heading" tabIndex={-1} className="text-3xl leading-tight font-extrabold text-balance sm:text-4xl">
             Hear what a poster says
           </h2>
-          <p className="mt-3 max-w-prose text-lg text-muted">
+          <p className="mx-auto mt-3 max-w-prose text-lg text-muted">
             Take a photo of an event flyer. You&apos;ll get the event name, date, time, and place in large text, and
             you can have it read aloud.
           </p>
         </div>
-        <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row">
           <button type="button" disabled={disabled} onClick={() => cameraRef.current?.click()} aria-describedby="privacy-note" className={`${BTN_PRIMARY} pointer-fine:hidden`}>
             Take a photo
           </button>
-          <button type="button" disabled={disabled} onClick={() => pickerRef.current?.click()} aria-describedby="privacy-note" className={BTN_OUTLINE}>
+          <button type="button" disabled={disabled} onClick={() => pickerRef.current?.click()} aria-describedby="privacy-note" className={PICK}>
             Choose an image
           </button>
         </div>

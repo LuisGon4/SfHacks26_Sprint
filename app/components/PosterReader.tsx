@@ -2,10 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { analyze, analyzeDemo, type AnalyzeResult, type ApiResult } from "@/lib/client/api";
+import { scrollToFocus } from "@/lib/client/focus";
 import { DECODE_ERROR, prepareImage } from "@/lib/client/prepareImage";
+import Hero from "./Hero";
 import ResultView from "./ResultView";
+import SiteHeader from "./SiteHeader";
 import UploadZone from "./UploadZone";
-import { BTN_OUTLINE, CALLOUT } from "./ui";
+import { BTN_OUTLINE, CALLOUT, CONTAINER } from "./ui";
 
 type View =
   | { kind: "idle" }
@@ -56,35 +59,49 @@ export default function PosterReader() {
     } catch {}
   };
 
-  const reset = () => {
+  // "Read another poster" lands on the upload card; Home lands on the hero.
+  const reset = (focusId = "upload-heading") => {
     restart();
     setView({ kind: "idle" });
-    requestAnimationFrame(() => document.getElementById("upload-heading")?.focus());
+    requestAnimationFrame(() => scrollToFocus(focusId));
   };
 
-  if (view.kind === "result") return <ResultView result={view.result} image={image} onReset={reset} />;
-
   const busy = view.kind === "busy";
-  return (
-    <div className="flex flex-col">
-      {/* Always mounted so screen readers register it before content arrives. */}
-      <div aria-live="polite" className="max-w-2xl [&:not(:empty)]:mb-6">
-        {busy && (
-          <p className="flex items-center gap-3 rounded-2xl bg-surface p-5 text-xl font-bold">
-            <span aria-hidden="true" className="size-6 shrink-0 animate-spin rounded-full border-4 border-line border-t-purple dark:border-t-gold" />
-            {view.status}
-          </p>
-        )}
-        {view.kind === "error" && (
-          <p className={`${CALLOUT} font-bold`}>{view.message}</p>
-        )}
+  const body =
+    view.kind === "result" ? (
+      <div className={`${CONTAINER} py-10 sm:py-14`}>
+        <ResultView result={view.result} image={image} onReset={() => reset()} />
       </div>
-      {view.kind === "error" && view.offerDemo && (
-        <button type="button" onClick={readDemo} className={`${BTN_OUTLINE} mb-6 self-start`}>
-          View a sample result
-        </button>
-      )}
-      <UploadZone disabled={busy} onFile={readFile} onDemo={readDemo} />
-    </div>
+    ) : (
+      <>
+        <Hero />
+        <div className={`${CONTAINER} py-16 sm:py-20`}>
+          <div className="mx-auto flex max-w-3xl flex-col">
+          {/* Always mounted so screen readers register it before content arrives. */}
+          <div aria-live="polite" className="[&:not(:empty)]:mb-6">
+            {view.kind === "busy" && (
+              <p className="flex items-center gap-3 rounded-2xl bg-surface p-5 text-xl font-bold shadow-card">
+                <span aria-hidden="true" className="size-6 shrink-0 animate-spin rounded-full border-4 border-line border-t-purple dark:border-t-gold" />
+                {view.status}
+              </p>
+            )}
+            {view.kind === "error" && <p className={`${CALLOUT} font-bold`}>{view.message}</p>}
+          </div>
+          {view.kind === "error" && view.offerDemo && (
+            <button type="button" onClick={readDemo} className={`${BTN_OUTLINE} mb-6 self-start`}>
+              View a sample result
+            </button>
+          )}
+          <UploadZone disabled={busy} onFile={readFile} onDemo={readDemo} />
+          </div>
+        </div>
+      </>
+    );
+
+  return (
+    <>
+      <SiteHeader onHome={reset} />
+      <main className="flex-1">{body}</main>
+    </>
   );
 }
