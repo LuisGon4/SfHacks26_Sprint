@@ -21,21 +21,21 @@ const FIELD_DOCS: Record<StringField, string> = {
   registration: "How to register or buy tickets, and any deadlines.",
   description: "Short description of what the event is about.",
   host_organization: "Organization or people hosting the event.",
-  contact_or_link: "Contact info, URL, or social handle shown.",
-  visual_description: "Short description of imagery and layout for blind users. Describe people only in general terms; never identify anyone.",
+  contact_or_link: "Official event contact, link, or social handle only; never an individual's personal phone or email unless printed as the event contact.",
+  visual_description: "Short description of imagery and layout for blind users. Describe people only in general terms, such as 'two students smiling'.",
   confidence_notes: "Note any blurry, ambiguous, or partially visible text.",
   summary: "2-4 plain sentences restating only the extracted fields.",
 };
 
 const stringProp = (k: StringField): Schema => ({
   type: Type.STRING,
-  description: `${FIELD_DOCS[k]} Keep under ${MAX_LEN[k]} characters. Use "${NOT_FOUND}" if not clearly visible.`,
+  description: `${FIELD_DOCS[k]} Keep under ${MAX_LEN[k]} characters. Use "${NOT_FOUND}" if no readable text.`,
 });
 
 export const posterResponseSchema: Schema = {
   type: Type.OBJECT,
   properties: {
-    is_poster: { type: Type.BOOLEAN, description: "True only if the image is an event poster/flyer." },
+    is_poster: { type: Type.BOOLEAN, description: "True if the image announces an event (poster, flyer, slide, screenshot, etc.)." },
     ...Object.fromEntries(STRING_FIELDS.map((k) => [k, stringProp(k)])),
   },
   required: ["is_poster", ...STRING_FIELDS],
